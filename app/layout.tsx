@@ -1,44 +1,53 @@
+import ScrollToTop from "@/components/common/scroll-to-top";
+import { ThemeProvider } from "@/components/theme/theme-context";
+import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
 import { ThirdwebProvider } from "thirdweb/react";
-import { Toaster } from "react-hot-toast";
-import { Navbar } from "@/components/Navbar";
-import Image from "next/image";
-import "@/globals.css";
-import { Metadata } from "next";
+import "./globals.scss";
+import React from "react";
+import { NextUIProvider } from "@nextui-org/react";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: "thirdweb Marketplace Template",
-  description:
-		"Create an NFT marketplace on top of your NFT collection on any EVM-compatible blockchain.",
+  title: "Generative Hub App",
+  description: "Generative Hub App: Powered by Forma NFTs",
+  icons: "/favicon.ico",
 };
 
 export default function RootLayout({
   children,
-}: {
-	children: React.ReactNode;
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  if (process.env.NODE_ENV === "production") console.log = () => {};
+
   return (
     <html lang="en">
-      <body className="relative overflow-x-hidden max-w-screen">
-        <div className="absolute top-0 left-0 right-0 w-screen h-screen -z-10">
-          <Image
-            src="/hero-gradient.png"
-            width={1390}
-            height={1390}
-            alt="Background gradient from red to blue"
-            quality={100}
-            className="w-full h-full opacity-75"
-          />
-        </div>
-
-        <Toaster />
-        <ThirdwebProvider>
-          <Navbar />
-          <div className="w-screen min-h-screen">
-            <div className="px-8 mx-auto mt-32 max-w-7xl">
-              {children}
-            </div>
-          </div>
-        </ThirdwebProvider>
+      <body
+        className={cn(
+          `bg-background text-text antialiased transition-colors duration-300 ease-out dark:bg-background-dark dark:text-text-dark`,
+          geistSans.variable,
+          geistMono.variable
+        )}
+      >
+        <ThemeProvider>
+          <ScrollToTop />
+          <Toaster closeButton richColors position="top-left" />
+          <NextUIProvider>
+            <ThirdwebProvider>{children}</ThirdwebProvider>
+          </NextUIProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
